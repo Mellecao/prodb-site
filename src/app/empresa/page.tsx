@@ -2,6 +2,7 @@
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TimelineSection } from "@/components/sections/TimelineSection";
 import { CertificationsSection } from "@/components/sections/CertificationsSection";
+import { CTASection } from "@/components/sections/CTASection";
 import { LiquidGlass } from "@/components/ui/LiquidGlass";
 import Link from "next/link";
 
@@ -63,16 +64,7 @@ export default function EmpresaPage() {
 
       <CertificationsSection />
 
-      {/* CTA Final */}
-      <section className="relative bg-bg-dark py-24 text-center overflow-hidden">
-        <div className="relative z-10 max-w-2xl mx-auto px-8">
-          <h2 className="text-4xl font-black text-white mb-5">Pronto para transformar sua infraestrutura?</h2>
-          <p className="text-white/50 text-lg mb-8">Fale com um especialista e descubra a solução ideal para o seu negócio.</p>
-          <Link href="#contato" className="inline-block bg-blue-primary text-white font-semibold px-8 py-4 rounded-full hover:bg-blue-dark-btn transition-colors text-sm">
-            Fale com um especialista
-          </Link>
-        </div>
-      </section>
+      <CTASection />
     </>
   );
 }

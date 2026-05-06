@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { HorizontalScroll } from "@/components/sections/HorizontalScroll";
 import { CertificationsSection } from "@/components/sections/CertificationsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { CTASection } from "@/components/sections/CTASection";
 
 export const metadata = {
   title: "Backup - Prodb",
@@ -80,6 +81,7 @@ export default function BackupPage() {
       <CertificationsSection compact />
 
       <ContactSection />
+      <CTASection title="Seus dados protegidos, seu negócio seguro" ctaLabel="Quero proteger meus dados" />
     </>
   );
 }

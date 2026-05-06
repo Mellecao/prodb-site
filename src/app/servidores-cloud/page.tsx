@@ -5,6 +5,7 @@ import { ParallaxSection } from "@/components/sections/ParallaxSection";
 import { LiquidGlass } from "@/components/ui/LiquidGlass";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { CertificationsSection } from "@/components/sections/CertificationsSection";
+import { CTASection } from "@/components/sections/CTASection";
 import heroAnimation from "@/data/hero-animation.json";
 
 export const metadata = {
@@ -98,6 +99,7 @@ export default function ServidoresCloudPage() {
       <CertificationsSection compact />
 
       <ContactSection />
+      <CTASection />
     </>
   );
 }
