@@ -41,8 +41,8 @@ export function LottieScrollSection({ blocks, src, id }: LottieScrollSectionProp
         // Control dotLottie frame
         const dl = dotLottieRef.current;
         if (dl) {
-          const total = dl.totalFrames ?? 60;
-          try { dl.seek(p * total); } catch { /* not ready yet */ }
+          const total: number = dl.totalFrames ?? 60;
+          try { dl.setFrame(p * total); } catch { /* not ready yet */ }
         }
 
         // Show/hide text blocks
@@ -120,7 +120,8 @@ function DesktopLottie({ src, onRef }: { src: string; onRef: (ref: unknown) => v
       autoplay={false}
       loop={false}
       dotLottieRefCallback={onRef}
-      style={{ width: "100%", maxWidth: 420, filter: "brightness(0)" }}
+      backgroundColor="transparent"
+      style={{ width: "100%", maxWidth: 420 }}
     />
   );
 }
@@ -144,7 +145,8 @@ function MobileLottieSection({ src, blocks, id }: { src: string; blocks: [TextBl
             src={src}
             autoplay
             loop
-            style={{ width: "100%", maxWidth: 280, filter: "brightness(0)" }}
+            backgroundColor="transparent"
+            style={{ width: "100%", maxWidth: 280 }}
           />
         )}
         {blocks.map((b, i) => (
