@@ -1,27 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --blue-primary: #018DEE;
+  --blue-secondary: #01AFE2;
+  --bg-dark: #040810;
+  --bg-dark-2: #07111f;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Custom scrollbar — desktop only (pointer: fine) */
+@media (pointer: fine) {
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.04); }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #018DEE, #01AFE2);
+    border-radius: 3px;
   }
 }
+
+/* Hide default cursor on desktop for custom cursor */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+html { scroll-behavior: auto; }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  background: #040810;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
 }
