@@ -1,24 +1,19 @@
 // src/components/sections/HeroSection.tsx
 "use client";
 import { useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import { gsap } from "@/lib/gsap";
 import { GridBackground } from "@/components/three/GridBackground";
 import { TypingText } from "@/components/ui/TypingText";
 import Link from "next/link";
-
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface HeroSectionProps {
   tag?: string;
   title: string;
   subtitle: string;
   ctas?: { label: string; href: string; primary?: boolean }[];
-  showLottie?: boolean;
-  animationData?: object;
 }
 
-export function HeroSection({ tag, title, subtitle, ctas = [], showLottie = false, animationData }: HeroSectionProps) {
+export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProps) {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctasRef = useRef<HTMLDivElement>(null);
   const tagRef = useRef<HTMLDivElement>(null);
@@ -42,7 +37,7 @@ export function HeroSection({ tag, title, subtitle, ctas = [], showLottie = fals
 
       <div className="relative z-10 max-w-7xl mx-auto px-8 w-full flex items-center gap-12">
         {/* Text */}
-        <div className={`flex flex-col ${showLottie ? "flex-[6]" : "flex-1 max-w-3xl"}`}>
+        <div className="flex flex-col flex-1 max-w-3xl">
           {tag && (
             <div ref={tagRef} className="text-blue-primary text-xs tracking-[3px] uppercase font-semibold mb-5">
               {tag}
@@ -76,17 +71,7 @@ export function HeroSection({ tag, title, subtitle, ctas = [], showLottie = fals
           )}
         </div>
 
-        {/* Lottie */}
-        {showLottie && animationData && (
-          <div className="flex-[4] flex items-center justify-center border-l border-blue-primary/10 pl-12">
-            <Lottie
-              animationData={animationData}
-              loop
-              autoplay
-              style={{ width: "100%", maxWidth: 460, filter: "brightness(0) invert(1)" }}
-            />
-          </div>
-        )}
+
       </div>
 
       {/* Bottom fade */}

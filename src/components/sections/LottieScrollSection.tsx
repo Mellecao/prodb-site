@@ -1,11 +1,8 @@
 // src/components/sections/LottieScrollSection.tsx
 "use client";
-import { useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useIsMobile } from "@/hooks/useIsMobile";
-
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface TextBlock {
   tag?: string;
@@ -15,13 +12,14 @@ interface TextBlock {
 
 interface LottieScrollSectionProps {
   blocks: [TextBlock, TextBlock, TextBlock];
-  animationData: object;
+  src: string;
   id?: string;
 }
 
-export function LottieScrollSection({ blocks, animationData, id }: LottieScrollSectionProps) {
+export function LottieScrollSection({ blocks, src, id }: LottieScrollSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const lottieRef = useRef<{ goToAndStop: (frame: number, isFrame: boolean) => void; getDuration: (inFrames: boolean) => number } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dotLottieRef = useRef<any>(null);
   const textRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
   const isMobile = useIsMobile();
 
@@ -29,8 +27,6 @@ export function LottieScrollSection({ blocks, animationData, id }: LottieScrollS
     if (isMobile) return;
     const section = sectionRef.current;
     if (!section) return;
-
-    const totalFrames = lottieRef.current?.getDuration(true) ?? 60;
     const vh = window.innerHeight;
 
     const trigger = ScrollTrigger.create({
@@ -41,8 +37,14 @@ export function LottieScrollSection({ blocks, animationData, id }: LottieScrollS
       scrub: 1,
       onUpdate: (self) => {
         const p = self.progress;
-        // Animate Lottie
-        lottieRef.current?.goToAndStop(p * totalFrames, true);
+
+        // Control dotLottie frame
+        const dl = dotLottieRef.current;
+        if (dl) {
+          const total = dl.totalFrames ?? 60;
+          try { dl.seek(p * total); } catch { /* not ready yet */ }
+        }
+
         // Show/hide text blocks
         textRefs.current.forEach((el, i) => {
           if (!el) return;
@@ -61,26 +63,9 @@ export function LottieScrollSection({ blocks, animationData, id }: LottieScrollS
     return () => trigger.kill();
   }, [isMobile]);
 
-  // Mobile: autoplay + text stacked below
   if (isMobile) {
     return (
-      <section id={id} className="bg-white py-16 px-6">
-        <div className="max-w-md mx-auto">
-          <Lottie
-            animationData={animationData}
-            loop
-            autoplay
-            style={{ width: "100%", maxWidth: 280, margin: "0 auto 32px", filter: "brightness(0)" }}
-          />
-          {blocks.map((b, i) => (
-            <div key={i} className="mb-10">
-              {b.tag && <p className="text-xs tracking-[3px] uppercase text-blue-primary mb-2 font-semibold">{b.tag}</p>}
-              <h3 className="text-2xl font-black text-gray-900 mb-3 leading-tight">{b.title}</h3>
-              <p className="text-gray-600 leading-relaxed">{b.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <MobileLottieSection src={src} blocks={blocks} id={id} />
     );
   }
 
@@ -107,14 +92,68 @@ export function LottieScrollSection({ blocks, animationData, id }: LottieScrollS
 
         {/* Lottie side */}
         <div className="w-[42%] flex items-center justify-center">
-          <Lottie
-            lottieRef={lottieRef as React.MutableRefObject<any>}
-            animationData={animationData}
-            autoplay={false}
-            loop={false}
-            style={{ width: "100%", maxWidth: 420, filter: "brightness(0)" }}
-          />
+          <DesktopLottie src={src} onRef={(ref) => { dotLottieRef.current = ref; }} />
         </div>
+      </div>
+    </section>
+  );
+}
+
+// Split into sub-components to avoid conditional hook issues with dynamic imports
+
+function DesktopLottie({ src, onRef }: { src: string; onRef: (ref: unknown) => void }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [DotLottieReact, setDotLottieReact] = useState<React.ComponentType<any> | null>(null);
+
+  useEffect(() => {
+    import("@lottiefiles/dotlottie-react").then((m) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setDotLottieReact(() => m.DotLottieReact as React.ComponentType<any>);
+    });
+  }, []);
+
+  if (!DotLottieReact) return <div className="w-full max-w-[420px] aspect-square" />;
+
+  return (
+    <DotLottieReact
+      src={src}
+      autoplay={false}
+      loop={false}
+      dotLottieRefCallback={onRef}
+      style={{ width: "100%", maxWidth: 420, filter: "brightness(0)" }}
+    />
+  );
+}
+
+function MobileLottieSection({ src, blocks, id }: { src: string; blocks: [TextBlock, TextBlock, TextBlock]; id?: string }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [DotLottieReact, setDotLottieReact] = useState<React.ComponentType<any> | null>(null);
+
+  useEffect(() => {
+    import("@lottiefiles/dotlottie-react").then((m) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setDotLottieReact(() => m.DotLottieReact as React.ComponentType<any>);
+    });
+  }, []);
+
+  return (
+    <section id={id} className="bg-white py-16 px-6">
+      <div className="max-w-md mx-auto">
+        {DotLottieReact && (
+          <DotLottieReact
+            src={src}
+            autoplay
+            loop
+            style={{ width: "100%", maxWidth: 280, filter: "brightness(0)" }}
+          />
+        )}
+        {blocks.map((b, i) => (
+          <div key={i} className="mb-10">
+            {b.tag && <p className="text-xs tracking-[3px] uppercase text-blue-primary mb-2 font-semibold">{b.tag}</p>}
+            <h3 className="text-2xl font-black text-gray-900 mb-3 leading-tight">{b.title}</h3>
+            <p className="text-gray-600 leading-relaxed">{b.body}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

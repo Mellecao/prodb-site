@@ -6,7 +6,6 @@ import { LiquidGlass } from "@/components/ui/LiquidGlass";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { CertificationsSection } from "@/components/sections/CertificationsSection";
 import { CTASection } from "@/components/sections/CTASection";
-import heroAnimation from "@/data/hero-animation.json";
 
 export const metadata = {
   title: "Servidores cloud - Prodb",
@@ -47,11 +46,9 @@ export default function ServidoresCloudPage() {
         title="Processamento rápido e confiável para o seu negócio"
         subtitle="Com uma infraestrutura robusta e confiável, nossas soluções em cloud permitem que sua empresa aloje aplicativos, bancos de dados e sites com total flexibilidade."
         ctas={[{ label: "Quero um servidor mais rápido e seguro", href: "#contato", primary: true }]}
-        showLottie
-        animationData={heroAnimation}
       />
 
-      <LottieScrollSection blocks={lottieBlocks} animationData={heroAnimation} id="features" />
+      <LottieScrollSection blocks={lottieBlocks} src="/lottie/lottie.lottie" id="features" />
 
       <ParallaxSection id="especialistas" className="py-24">
         <div className="max-w-6xl mx-auto px-8">

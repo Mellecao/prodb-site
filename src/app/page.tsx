@@ -6,8 +6,6 @@ import { WhyProdbSection } from "@/components/sections/WhyProdbSection";
 import { PartnersSection } from "@/components/sections/PartnersSection";
 import { NewsSection } from "@/components/sections/NewsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
-import heroAnimation from "@/data/hero-animation.json";
-
 const lottieBlocks: [
   { tag: string; title: string; body: string },
   { tag: string; title: string; body: string },
@@ -65,13 +63,11 @@ export default function HomePage() {
           { label: "Quero proteger meus dados", href: "/backup", primary: true },
           { label: "Quero meu servidor na nuvem", href: "/servidores-cloud" },
         ]}
-        showLottie
-        animationData={heroAnimation}
       />
 
       <LottieScrollSection
         blocks={lottieBlocks}
-        animationData={heroAnimation}
+        src="/lottie/lottie.lottie"
         id="solucoes"
       />
 
