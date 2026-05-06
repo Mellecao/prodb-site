@@ -34,7 +34,7 @@ export function LottieScrollSection({ blocks, src, id }: LottieScrollSectionProp
       pin: true,
       start: "top top",
       end: `+=${vh * 3}`,
-      scrub: 1,
+      scrub: 0.4,
       onUpdate: (self) => {
         const p = self.progress;
 
@@ -42,7 +42,9 @@ export function LottieScrollSection({ blocks, src, id }: LottieScrollSectionProp
         const dl = dotLottieRef.current;
         if (dl) {
           const total: number = dl.totalFrames ?? 60;
-          try { dl.setFrame(p * total); } catch { /* not ready yet */ }
+          // Clamp to [0, total-1] to avoid out-of-range edge
+          const frame = Math.min(p * total, total - 0.001);
+          try { dl.setFrame(frame); } catch { /* not ready yet */ }
         }
 
         // Show/hide text blocks
@@ -119,7 +121,13 @@ function DesktopLottie({ src, onRef }: { src: string; onRef: (ref: unknown) => v
       src={src}
       autoplay={false}
       loop={false}
-      dotLottieRefCallback={onRef}
+      dotLottieRefCallback={(ref: unknown) => {
+        onRef(ref);
+        // Explicitly pause so setFrame has full control with no internal playhead conflict
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const dl = ref as any;
+        if (dl) { dl.pause(); dl.setFrame(0); }
+      }}
       backgroundColor="transparent"
       style={{ width: "100%", maxWidth: 420 }}
     />
