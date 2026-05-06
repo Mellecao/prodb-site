@@ -12,11 +12,12 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
 
     const lenis = createLenis();
     lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    const tickerFn = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(tickerFn);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      gsap.ticker.remove(tickerFn);
       destroyLenis();
     };
   }, [isMobile]);
