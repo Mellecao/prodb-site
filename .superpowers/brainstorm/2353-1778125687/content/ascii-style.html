@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII Cloud Styles</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1117; color: #e6edf3; font-family: 'Inter', sans-serif; padding: 24px; }
+
+  h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #fff; }
+  .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 28px; }
+
+  .options-grid { display: flex; flex-direction: column; gap: 20px; }
+
+  .option-card {
+    border: 1.5px solid #30363d;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    background: #161b22;
+  }
+  .option-card:hover { border-color: #018DEE; transform: translateY(-2px); }
+  .option-card.selected { border-color: #018DEE; box-shadow: 0 0 0 2px rgba(1,141,238,0.25); }
+
+  .preview-strip {
+    background: #ffffff;
+    padding: 20px 0;
+    overflow: hidden;
+    position: relative;
+    height: 110px;
+    display: flex;
+    align-items: center;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 72px;
+    animation: scroll-right 12s linear infinite;
+    white-space: pre;
+    align-items: center;
+    padding-left: 72px;
+  }
+
+  @keyframes scroll-right {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0%); }
+  }
+
+  .cloud-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.35;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+  }
+
+  .cloud-wrap.bob-1 { animation: bob 3.8s ease-in-out infinite; }
+  .cloud-wrap.bob-2 { animation: bob 4.2s ease-in-out 0.6s infinite; }
+  .cloud-wrap.bob-3 { animation: bob 3.5s ease-in-out 1.2s infinite; }
+  .cloud-wrap.bob-4 { animation: bob 4.5s ease-in-out 0.3s infinite; }
+  .cloud-wrap.bob-5 { animation: bob 3.9s ease-in-out 0.9s infinite; }
+  .cloud-wrap.bob-6 { animation: bob 4.1s ease-in-out 1.5s infinite; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .outline { color: rgba(1,141,238,0.3); }
+  .symbol { color: #018DEE; }
+
+  .option-meta {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .option-label { font-weight: 600; font-size: 15px; }
+  .option-desc { color: #8b949e; font-size: 13px; }
+  .check {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid #30363d;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .option-card.selected .check { background: #018DEE; border-color: #018DEE; color: white; }
+
+  /* Prevent scrollbar flash */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #161b22; }
+  ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<h2>Como deve ser o símbolo ASCII?</h2>
+<p class="subtitle">Cada opção mostra o símbolo PRODB em ASCII animado como apareceria no marquee. Clique para selecionar.</p>
+
+<div class="options-grid">
+
+  <!-- Option A: Simple round cloud -->
+  <div class="option-card" onclick="select(this, 'a')" data-choice="a">
+    <div class="preview-strip">
+      <div class="marquee-track" id="track-a">
+        <!-- repeated 10x -->
+      </div>
+    </div>
+    <div class="option-meta">
+      <div>
+        <div class="option-label">A — Nuvem redonda simples</div>
+        <div class="option-desc">5 linhas · limpa · leitura fácil em qualquer tamanho</div>
+      </div>
+      <div class="check">✓</div>
+    </div>
+  </div>
+
+  <!-- Option B: Bumpy cloud top -->
+  <div class="option-card" onclick="select(this, 'b')" data-choice="b">
+    <div class="preview-strip">
+      <div class="marquee-track" id="track-b"></div>
+    </div>
+    <div class="option-meta">
+      <div>
+        <div class="option-label">B — Nuvem com saliências</div>
+        <div class="option-desc">6 linhas · mais detalhada · reconhecível como nuvem</div>
+      </div>
+      <div class="check">✓</div>
+    </div>
+  </div>
+
+  <!-- Option C: Minimal 3-line -->
+  <div class="option-card" onclick="select(this, 'c')" data-choice="c">
+    <div class="preview-strip">
+      <div class="marquee-track" id="track-c"></div>
+    </div>
+    <div class="option-meta">
+      <div>
+        <div class="option-label">C — Minimalista (3 linhas)</div>
+        <div class="option-desc">compacta · moderna · boa em fontes grandes</div>
+      </div>
+      <div class="check">✓</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ASCII art designs
+  const DESIGNS = {
+    a: [
+      {t: "  .~~~~~.  ", sym: []},
+      {t: " /  >      \\", sym: [3]},
+      {t: "(       ─   )", sym: [8]},
+      {t: " \\          /", sym: []},
+      {t: "  '˜˜˜˜˜˜'  ", sym: []},
+    ],
+    b: [
+      {t: "  .-'˜˜'-.  ", sym: []},
+      {t: " /   >      \\", sym: [4]},
+      {t: "(             )", sym: []},
+      {t: " \\    ─      /", sym: [6]},
+      {t: "  '-.____.-'  ", sym: []},
+    ],
+    c: [
+      {t: " .≈≈≈≈≈.", sym: []},
+      {t: "( >   ─ )", sym: [2, 6]},
+      {t: " '≈≈≈≈≈'", sym: []},
+    ],
+  };
+
+  // Use raw ASCII since unicode can be tricky — override with actual chars
+  const CLOUDS = {
+    a: [
+      ["  .~~~~~.  ", []],
+      [" /  >      \\", [4]],
+      ["(       ─   )", [8]],
+      [" \\          /", []],
+      ["  '~~~~~~'  ", []],
+    ],
+    b: [
+      [" .-'~~'~'-.  ", []],
+      ["/   >        \\", [4]],
+      ["|             |", []],
+      ["|      ─      |", [7]],
+      ["\\             /", []],
+      [" '-~~~~~~~~~-' ", []],
+    ],
+    c: [
+      [" .~~~~~.", []],
+      ["( >   ─ )", [2, 6]],
+      [" '~~~~~'", []],
+    ],
+  };
+
+  const bobs = ['bob-1','bob-2','bob-3','bob-4','bob-5','bob-6'];
+
+  function buildCloud(lines) {
+    const wrap = document.createElement('div');
+    wrap.className = 'cloud-wrap ' + bobs[Math.floor(Math.random() * bobs.length)];
+    lines.forEach(([text, symIdxs]) => {
+      const row = document.createElement('div');
+      // Build character by character
+      let html = '';
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const isSym = ch === '>' || ch === '─' || ch === '—';
+        html += `<span class="${isSym ? 'symbol' : 'outline'}">${ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '&' ? '&amp;' : ch}</span>`;
+      }
+      row.innerHTML = html;
+      wrap.appendChild(row);
+    });
+    return wrap;
+  }
+
+  function buildTrack(trackId, design) {
+    const track = document.getElementById(trackId);
+    // Build 10 clouds per track (they'll scroll infinitely)
+    for (let i = 0; i < 10; i++) {
+      track.appendChild(buildCloud(design));
+    }
+  }
+
+  buildTrack('track-a', CLOUDS.a);
+  buildTrack('track-b', CLOUDS.b);
+  buildTrack('track-c', CLOUDS.c);
+
+  let selected = null;
+  function select(el, choice) {
+    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selected = choice;
+    // Dispatch for the helper script
+    if (window.recordChoice) window.recordChoice(choice, el.querySelector('.option-label').textContent);
+  }
+</script>
+
+</body>
+</html>

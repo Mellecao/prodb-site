@@ -87,6 +87,31 @@ export function LiquidGlass({
   );
 }
 
+interface LiquidGlassV2Props {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export function LiquidGlassV2({ children, className = "", style }: LiquidGlassV2Props) {
+  return (
+    <div
+      className={`relative overflow-hidden ${className}`}
+      style={{
+        borderRadius: 9999,
+        backdropFilter: "blur(14px) saturate(130%)",
+        WebkitBackdropFilter: "blur(14px) saturate(130%)",
+        background: "rgba(255,255,255,0.08)",
+        border: "1px solid rgba(255,255,255,0.22)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18), 0 4px 20px rgba(0,0,0,0.18)",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function LiquidGlassProvider({ children }: { children: React.ReactNode }) {
   return (
     <>

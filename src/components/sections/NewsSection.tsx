@@ -43,7 +43,7 @@ export function NewsSection() {
   }, []);
 
   return (
-    <section id="blog" className="bg-bg-light py-24">
+    <section id="blog" className="bg-white py-24">
       <div className="max-w-6xl mx-auto px-8">
         <div className="mb-12">
           <p className="text-xs tracking-[3px] uppercase text-blue-primary font-semibold mb-3">Blog</p>

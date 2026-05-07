@@ -6,6 +6,7 @@ import { CustomCursor } from "@/components/ui/CustomCursor";
 import { ScrollTrail } from "@/components/ui/ScrollTrail";
 import { NavIsland } from "@/components/layout/NavIsland";
 import { Footer } from "@/components/layout/Footer";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 export const metadata: Metadata = {
   title: "Prodb - A solução em nuvem que impulsiona o seu sucesso",
@@ -16,7 +17,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
+      <head>
+        <link rel="preload" href="/models/logo-prodb-3d.glb" as="fetch" crossOrigin="anonymous" />
+      </head>
       <body>
+        <LoadingScreen />
         <LiquidGlassProvider>
           <LenisProvider>
             <CustomCursor />

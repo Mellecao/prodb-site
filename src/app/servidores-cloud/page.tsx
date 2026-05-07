@@ -1,6 +1,7 @@
 // src/app/servidores-cloud/page.tsx
 import { HeroSection } from "@/components/sections/HeroSection";
 import { LottieScrollSection } from "@/components/sections/LottieScrollSection";
+import heroAnimation from "@/data/hero-animation.json";
 import { ParallaxSection } from "@/components/sections/ParallaxSection";
 import { LiquidGlass } from "@/components/ui/LiquidGlass";
 import { ContactSection } from "@/components/sections/ContactSection";
@@ -48,7 +49,7 @@ export default function ServidoresCloudPage() {
         ctas={[{ label: "Quero um servidor mais rápido e seguro", href: "#contato", primary: true }]}
       />
 
-      <LottieScrollSection blocks={lottieBlocks} src="/lottie/lottie.lottie" id="features" />
+      <LottieScrollSection blocks={lottieBlocks} animationData={heroAnimation} id="features" />
 
       <ParallaxSection id="especialistas" className="py-24">
         <div className="max-w-6xl mx-auto px-8">

@@ -1,8 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { ScrollTrigger } from "@/lib/gsap";
-
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&";
+import { useEffect, useRef } from "react";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 interface GlitchTextProps {
   text: string;
@@ -12,38 +10,26 @@ interface GlitchTextProps {
 
 export function GlitchText({ text, as: Tag = "h2", className = "" }: GlitchTextProps) {
   const ref = useRef<HTMLElement>(null);
-  const [display, setDisplay] = useState(text);
-  const triggeredRef = useRef(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
+    const words = Array.from(el.querySelectorAll<HTMLSpanElement>(".rw"));
+    gsap.set(words, { opacity: 0, y: 18, filter: "blur(4px)" });
+
     const trigger = ScrollTrigger.create({
       trigger: el,
-      start: "top 85%",
+      start: "top 88%",
       onEnter: () => {
-        if (triggeredRef.current) return;
-        triggeredRef.current = true;
-
-        let iteration = 0;
-        const interval = setInterval(() => {
-          setDisplay(
-            text
-              .split("")
-              .map((char, i) => {
-                if (i < iteration) return char;
-                if (char === " ") return " ";
-                return CHARS[Math.floor(Math.random() * CHARS.length)];
-              })
-              .join("")
-          );
-          iteration += 0.5;
-          if (iteration >= text.length) {
-            clearInterval(interval);
-            setDisplay(text);
-          }
-        }, 50);
+        gsap.to(words, {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.65,
+          stagger: 0.07,
+          ease: "power3.out",
+        });
       },
     });
 
@@ -53,7 +39,11 @@ export function GlitchText({ text, as: Tag = "h2", className = "" }: GlitchTextP
   return (
     // @ts-expect-error dynamic tag
     <Tag ref={ref} className={`font-black tracking-tight ${className}`}>
-      {display}
+      {text.split(" ").map((word, i) => (
+        <span key={i} className="rw inline-block" style={{ marginRight: "0.28em", opacity: 0 }}>
+          {word}
+        </span>
+      ))}
     </Tag>
   );
 }

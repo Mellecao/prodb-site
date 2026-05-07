@@ -2,8 +2,7 @@ import { GlitchText } from "@/components/ui/GlitchText";
 import { Marquee } from "@/components/ui/Marquee";
 
 const partners = [
-  { src: "/parceiros/cropped-gtgm-e1738613889211.png", alt: "GTGM" },
-  { src: "/parceiros/gestao-dinamica-logo.png", alt: "Gestão Dinâmica" },
+{ src: "/parceiros/gestao-dinamica-logo.png", alt: "Gestão Dinâmica" },
   { src: "/parceiros/inntegra-logo.png", alt: "Inntegra" },
   { src: "/parceiros/kruzer-logo.png", alt: "Kruzer" },
   { src: "/parceiros/m3-case-logo.png", alt: "M3 Case" },
