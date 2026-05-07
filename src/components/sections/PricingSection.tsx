@@ -263,7 +263,11 @@ function PricingCard({ plan }: { plan: Plan }) {
       <h3 className="relative z-10 text-white text-xl font-bold mb-1">{plan.name}</h3>
 
       <div className="relative z-10 flex items-baseline gap-2 mt-5 mb-6">
-        <span className="text-4xl md:text-5xl font-black text-white leading-none">
+        <span
+          className={`font-black text-white leading-none ${
+            plan.suffix ? "text-4xl md:text-5xl" : "text-2xl md:text-3xl"
+          }`}
+        >
           {plan.price}
         </span>
         {plan.suffix && (
