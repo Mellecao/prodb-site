@@ -67,18 +67,11 @@ export function Marquee({ items, speed = 25, className = "" }: MarqueeProps) {
     const onResize = () => setup();
     window.addEventListener("resize", onResize);
 
-    const pause = () => tlRef.current?.timeScale(0.2);
-    const resume = () => tlRef.current?.timeScale(1);
-    track.addEventListener("mouseenter", pause);
-    track.addEventListener("mouseleave", resume);
-
     return () => {
       tlRef.current?.kill();
       ro.disconnect();
       window.removeEventListener("resize", onResize);
       imgs.forEach((img) => img.removeEventListener("load", onLoad));
-      track.removeEventListener("mouseenter", pause);
-      track.removeEventListener("mouseleave", resume);
     };
   }, [speed, items.length, copies]);
 
@@ -89,9 +82,9 @@ export function Marquee({ items, speed = 25, className = "" }: MarqueeProps) {
       className={`overflow-hidden ${className}`}
       style={{
         WebkitMaskImage:
-          "linear-gradient(to right, transparent 0%, black 9%, black 91%, transparent 100%)",
+          "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
         maskImage:
-          "linear-gradient(to right, transparent 0%, black 9%, black 91%, transparent 100%)",
+          "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
       }}
     >
       <div ref={trackRef} className="flex gap-20 w-max">
