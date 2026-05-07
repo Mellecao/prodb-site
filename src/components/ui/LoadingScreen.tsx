@@ -7,6 +7,8 @@ import type * as THREE from "three";
 const _threePromise = import("three");
 const _gltfLoaderPromise = import("three/examples/jsm/loaders/GLTFLoader.js");
 
+const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+
 export function LoadingScreen() {
   const pathname = usePathname();
   const mountRef = useRef<HTMLDivElement>(null);
@@ -15,10 +17,7 @@ export function LoadingScreen() {
   const [phase, setPhase] = useState<"show" | "fade" | "gone">("show");
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // Mode is captured ONCE at mount based on the current route.
-  // useState's lazy initializer means SPA navigations won't change it.
-  // — index ('/') always shows GLB on full page load
-  // — every other page shows the simple SVG loader
+  // Mode locked at mount: '/' = GLB on every full reload; everything else = simple SVG.
   const [mode] = useState<"glb" | "simple">(() => (pathname === "/" ? "glb" : "simple"));
 
   // GLB mode
@@ -27,8 +26,24 @@ export function LoadingScreen() {
     const container = mountRef.current;
     if (!container) return;
 
-    const glbPromise = fetch("/models/logo-prodb-3d.glb").then((r) => r.arrayBuffer());
+    let cancelled = false;
     let dispose: (() => void) | undefined;
+
+    // Smoothly animate the bar from 0 → 65 % during fetch + parse + setup, regardless of network.
+    // The remaining 65 → 100 % is driven by the spin animation.
+    const FAKE_TARGET = 65;
+    let fake = 0;
+    const fakeId = window.setInterval(() => {
+      // Asymptotic ease — fast start, slow approach.
+      fake += (FAKE_TARGET - fake) * 0.04;
+      if (barRef.current) barRef.current.style.width = `${fake}%`;
+    }, 16);
+
+    const setBar = (pct: number) => {
+      if (barRef.current) barRef.current.style.width = `${pct}%`;
+    };
+
+    const glbPromise = fetch("/models/logo-prodb-3d.glb").then((r) => r.arrayBuffer());
 
     (async () => {
       const [THREE, { GLTFLoader }, glbBuffer] = await Promise.all([
@@ -36,6 +51,10 @@ export function LoadingScreen() {
         _gltfLoaderPromise,
         glbPromise,
       ]);
+      if (cancelled) return;
+
+      // Yield so the spinner / bar can paint a frame between heavy steps.
+      await nextFrame();
 
       const mobile = window.innerWidth < 768;
       const size = mobile ? 380 : 720;
@@ -44,8 +63,13 @@ export function LoadingScreen() {
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
       camera.position.z = mobile ? 4.2 : 2.5;
 
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      const renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+      // Cap DPR at 1.5 — pixel-perfect at no real visual cost on retina, much cheaper to render.
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
       renderer.setSize(size, size);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       container.appendChild(renderer.domElement);
@@ -74,46 +98,72 @@ export function LoadingScreen() {
         side: THREE.DoubleSide,
       });
 
-      new GLTFLoader().parse(glbBuffer, "", (gltf) => {
-        const model = gltf.scene;
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
-        model.position.sub(center);
-
-        model.traverse((node) => {
-          if ((node as THREE.Mesh).isMesh) {
-            const mesh = node as THREE.Mesh;
-            const n = mesh.name.toLowerCase();
-            mesh.material = n.includes("cloud") || n.includes("nuvem") ? cloudMat : bodyMat;
-          }
-        });
-
-        scene.add(model);
-        setModelLoaded(true);
-
-        const SPIN_MS = 1400;
-        const start = performance.now();
-
-        const tick = () => {
-          const p = Math.min((performance.now() - start) / SPIN_MS, 1);
-          const eased = 1 - Math.pow(1 - p, 4);
-          model.rotation.y = eased * Math.PI * 2;
-          if (barRef.current) barRef.current.style.width = `${p * 100}%`;
-          renderer.render(scene, camera);
-          if (p < 1) {
-            rafRef.current = requestAnimationFrame(tick);
-          } else {
-            setTimeout(() => {
-              setPhase("fade");
-              setTimeout(() => setPhase("gone"), 700);
-            }, 380);
-          }
-        };
-        rafRef.current = requestAnimationFrame(tick);
+      // Parse the GLB. parse() is synchronous so wrap in a Promise + yield around it.
+      const gltf = await new Promise<{ scene: THREE.Group }>((resolve) => {
+        new GLTFLoader().parse(glbBuffer, "", (g) => resolve(g as { scene: THREE.Group }));
       });
+      if (cancelled) return;
+      await nextFrame();
+
+      const model = gltf.scene;
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+
+      model.traverse((node) => {
+        if ((node as THREE.Mesh).isMesh) {
+          const mesh = node as THREE.Mesh;
+          const n = mesh.name.toLowerCase();
+          mesh.material = n.includes("cloud") || n.includes("nuvem") ? cloudMat : bodyMat;
+        }
+      });
+
+      scene.add(model);
+      await nextFrame();
+
+      // ⚡ Pre-compile every shader BEFORE the first frame of the spin animation.
+      // This is what removes the ~100-300 ms hitch on the first render call.
+      // compileAsync uses KHR_parallel_shader_compile when supported by the GPU.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const r = renderer as any;
+      if (typeof r.compileAsync === "function") {
+        await r.compileAsync(scene, camera);
+      } else {
+        renderer.compile(scene, camera);
+      }
+      if (cancelled) return;
+
+      // One warm-up render to push the very first draw out of the visible animation window.
+      renderer.render(scene, camera);
+
+      // Stop the fake progress; spin animation drives the bar to 100 from here.
+      window.clearInterval(fakeId);
+      setModelLoaded(true);
+
+      const SPIN_MS = 1400;
+      const start = performance.now();
+      const startBar = fake; // continue from wherever fake progress reached
+
+      const tick = () => {
+        const p = Math.min((performance.now() - start) / SPIN_MS, 1);
+        const eased = 1 - Math.pow(1 - p, 4);
+        model.rotation.y = eased * Math.PI * 2;
+        setBar(startBar + (100 - startBar) * p);
+        renderer.render(scene, camera);
+        if (p < 1) {
+          rafRef.current = requestAnimationFrame(tick);
+        } else {
+          setTimeout(() => {
+            setPhase("fade");
+            setTimeout(() => setPhase("gone"), 700);
+          }, 320);
+        }
+      };
+      rafRef.current = requestAnimationFrame(tick);
 
       dispose = () => {
         cancelAnimationFrame(rafRef.current);
+        window.clearInterval(fakeId);
         renderer.dispose();
         cloudMat.dispose();
         bodyMat.dispose();
@@ -121,7 +171,11 @@ export function LoadingScreen() {
       };
     })();
 
-    return () => dispose?.();
+    return () => {
+      cancelled = true;
+      window.clearInterval(fakeId);
+      dispose?.();
+    };
   }, [mode]);
 
   // Simple mode — symbol + progress bar
@@ -185,7 +239,6 @@ export function LoadingScreen() {
     );
   }
 
-  // GLB loader (first visit) — also shown while mode is null (initial render)
   return (
     <div className={cls} style={{ background: "#040810" }}>
       <div
@@ -209,7 +262,12 @@ export function LoadingScreen() {
         <div className="overflow-hidden rounded-full" style={{ width: 112, height: 2, background: "rgba(255,255,255,0.08)" }}>
           <div
             ref={barRef}
-            style={{ height: "100%", width: "0%", background: "linear-gradient(90deg, #018DEE, #01AFE2)", borderRadius: "9999px" }}
+            style={{
+              height: "100%", width: "0%",
+              background: "linear-gradient(90deg, #018DEE, #01AFE2)",
+              borderRadius: "9999px",
+              transition: "width 60ms linear",
+            }}
           />
         </div>
       </div>

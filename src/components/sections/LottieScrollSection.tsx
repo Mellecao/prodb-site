@@ -201,9 +201,7 @@ export function LottieScrollSection({ blocks, animationData, id }: LottieScrollS
   }, [isMobile]);
 
   if (isMobile) {
-    return (
-      <MobileLottieSection animationData={animationData} blocks={blocks} id={id} />
-    );
+    return <MobileLottieSection blocks={blocks} id={id} />;
   }
 
   return (
@@ -310,39 +308,20 @@ function DesktopLottie({
 }
 
 function MobileLottieSection({
-  animationData,
   blocks,
   id,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  animationData: any;
   blocks: [TextBlock, TextBlock, TextBlock];
   id?: string;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [Lottie, setLottie] = useState<React.ComponentType<any> | null>(null);
-
-  useEffect(() => {
-    import("lottie-react").then((m) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setLottie(() => m.default as React.ComponentType<any>);
-    });
-  }, []);
-
   return (
-    <section id={id} className="bg-white py-16 px-6">
+    <section id={id} className="bg-white py-20 px-6">
       <div className="max-w-md mx-auto">
-        {Lottie && (
-          <Lottie
-            animationData={animationData}
-            autoplay
-            loop
-            style={{ width: "100%", maxWidth: 280 }}
-          />
-        )}
         {blocks.map((b, i) => (
-          <div key={i} className="mb-10">
-            {b.tag && <p className="text-xs tracking-[3px] uppercase text-blue-primary mb-2 font-semibold">{b.tag}</p>}
+          <div key={i} className="mb-12 last:mb-0">
+            {b.tag && (
+              <p className="text-xs tracking-[3px] uppercase text-blue-primary mb-2 font-semibold">{b.tag}</p>
+            )}
             <h3 className="text-2xl font-black text-gray-900 mb-3 leading-tight">{b.title}</h3>
             <p className="text-gray-600 leading-relaxed">{b.body}</p>
           </div>

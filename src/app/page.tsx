@@ -60,21 +60,13 @@ const solutionCards = [
 export default function HomePage() {
   return (
     <>
-      {/* Single sticky container — both sections absolutely stacked inside.
-          Hero (z:10) sits on top of Lottie (z:1). Hero fades 0→1.5vh, lottie plays 1.5→4.5vh.
-          450vh of sticky scroll = exactly the window we need. */}
-      <div style={{ position: "relative", height: "550vh" }}>
-        <div style={{ position: "sticky", top: 0, height: "100vh" }}>
-          {/* Lottie behind */}
-          <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
-            <LottieScrollSection
-              blocks={lottieBlocks}
-              animationData={heroAnimation}
-              id="solucoes"
-            />
-          </div>
-          {/* Hero on top */}
-          <div style={{ position: "absolute", inset: 0, zIndex: 10 }}>
+      {/* Hero + Lottie layout
+          Desktop: 550vh sticky container with both sections absolutely overlapped (hero z:10 on top of lottie z:1).
+          Mobile:  no sticky / no absolute / no fixed height — sections flow normally one after the other. */}
+      <div className="md:relative md:h-[550vh]">
+        <div className="md:sticky md:top-0 md:h-screen">
+          {/* HeroSection — top layer on desktop, FIRST on mobile */}
+          <div className="md:absolute md:inset-0 md:z-[10]">
             <HeroSection
               title="A solução em nuvem que impulsiona o seu sucesso"
               subtitle="Simplifique operações, aumente a segurança dos seus dados e escale seu negócio com tecnologia em nuvem sob medida para você."
@@ -82,6 +74,14 @@ export default function HomePage() {
                 { label: "Quero proteger meus dados", href: "/backup", primary: true },
                 { label: "Quero meu servidor na nuvem", href: "/servidores-cloud" },
               ]}
+            />
+          </div>
+          {/* LottieScrollSection — back layer on desktop, SECOND on mobile */}
+          <div className="md:absolute md:inset-0 md:z-[1]">
+            <LottieScrollSection
+              blocks={lottieBlocks}
+              animationData={heroAnimation}
+              id="solucoes"
             />
           </div>
         </div>
