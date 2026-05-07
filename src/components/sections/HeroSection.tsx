@@ -86,13 +86,13 @@ export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProp
       ref={sectionRef}
       className="relative z-[10] min-h-screen bg-blue-950 flex items-center overflow-hidden pt-24"
     >
-      {/* Video background */}
+      {/* Video background — desktop only */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[1]"
+        className="hidden md:block absolute inset-0 w-full h-full object-cover pointer-events-none z-[1]"
         style={{ opacity: 0.45 }}
       >
         <source src="/videos/hero.mp4" type="video/mp4" />
@@ -120,6 +120,14 @@ export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProp
 
       {/* Centered text */}
       <div className="relative z-[10] w-full flex flex-col items-center text-center px-8" style={{ transform: "translateY(-150px)" }}>
+        {/* Logo — mobile only, sits above the title */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo/prodb-logo-branco.svg"
+          alt="Prodb"
+          className="md:hidden h-10 mb-7 select-none"
+          style={{ filter: "drop-shadow(0 0 16px rgba(1,141,238,0.5))" }}
+        />
         <h1
           className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.06] tracking-[-2px] text-white mb-6 max-w-3xl"
           style={{
@@ -137,12 +145,12 @@ export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProp
         </p>
       </div>
 
-      {/* CTAs */}
+      {/* CTAs — bottom 172px on mobile (90px lower), 262px on desktop */}
       {ctas.length > 0 && (
         <div
           ref={ctasRef}
-          className="absolute left-0 right-0 flex justify-center flex-wrap gap-4 px-8"
-          style={{ bottom: "262px", zIndex: 4, opacity: 0, transform: "translateY(16px)" }}
+          className="absolute left-0 right-0 flex justify-center flex-wrap gap-4 px-8 bottom-[172px] md:bottom-[262px]"
+          style={{ zIndex: 4, opacity: 0, transform: "translateY(16px)" }}
         >
           {ctas.map((cta) =>
             cta.primary ? (
@@ -165,22 +173,22 @@ export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProp
         </div>
       )}
 
-      {/* Left cloud */}
+      {/* Left cloud — desktop only */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={leftCloudRef}
         src="/assets/nuvem%20esquerda.png"
         alt=""
-        className="absolute left-0 w-[78%] max-w-[960px] object-contain object-bottom select-none pointer-events-none"
+        className="hidden md:block absolute left-0 w-[78%] max-w-[960px] object-contain object-bottom select-none pointer-events-none"
         style={{ opacity: 0.3, bottom: "-120px", zIndex: 5 }}
       />
-      {/* Right cloud */}
+      {/* Right cloud — desktop only */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={rightCloudRef}
         src="/assets/nuvem%20direita.png"
         alt=""
-        className="absolute right-0 w-[78%] max-w-[960px] object-contain object-bottom select-none pointer-events-none"
+        className="hidden md:block absolute right-0 w-[78%] max-w-[960px] object-contain object-bottom select-none pointer-events-none"
         style={{ opacity: 0.3, bottom: "-120px", zIndex: 6 }}
       />
 
