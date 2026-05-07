@@ -1,29 +1,25 @@
 // src/components/ui/LoadingScreen.tsx
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import type * as THREE from "three";
 
 const _threePromise = import("three");
 const _gltfLoaderPromise = import("three/examples/jsm/loaders/GLTFLoader.js");
 
 export function LoadingScreen() {
+  const pathname = usePathname();
   const mountRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef(0);
   const [phase, setPhase] = useState<"show" | "fade" | "gone">("show");
   const [modelLoaded, setModelLoaded] = useState(false);
-  const [mode, setMode] = useState<"glb" | "simple" | null>(null);
 
-  // Ref guard prevents StrictMode's double-invocation from flipping glb → simple
-  const modeDetected = useRef(false);
-
-  useEffect(() => {
-    if (modeDetected.current) return;
-    modeDetected.current = true;
-    const first = !sessionStorage.getItem("prodb_loaded");
-    if (first) sessionStorage.setItem("prodb_loaded", "1");
-    setMode(first ? "glb" : "simple");
-  }, []);
+  // Mode is captured ONCE at mount based on the current route.
+  // useState's lazy initializer means SPA navigations won't change it.
+  // — index ('/') always shows GLB on full page load
+  // — every other page shows the simple SVG loader
+  const [mode] = useState<"glb" | "simple">(() => (pathname === "/" ? "glb" : "simple"));
 
   // GLB mode
   useEffect(() => {
