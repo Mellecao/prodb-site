@@ -45,7 +45,17 @@ export function NavIsland() {
           }}
         >
           <Link href="/" className="shrink-0">
-            <Image src="/logo/prodb-logo-branco.svg" alt="Prodb" width={90} height={28} priority />
+            <div className="relative">
+              <Image src="/logo/prodb-logo-branco.svg" alt="Prodb" width={90} height={28} priority />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/birthday-hat.svg"
+                alt=""
+                aria-hidden="true"
+                className="absolute pointer-events-none select-none"
+                style={{ width: 18, height: 24, top: -17, left: -1, transform: "rotate(-14deg)" }}
+              />
+            </div>
           </Link>
 
           <div className="flex items-center gap-6">
@@ -135,7 +145,17 @@ export function NavIsland() {
             style={{ background: "#040810", borderLeft: "1px solid rgba(255,255,255,0.1)" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Image src="/logo/prodb-logo-branco.svg" alt="Prodb" width={80} height={25} />
+            <div className="relative inline-block">
+              <Image src="/logo/prodb-logo-branco.svg" alt="Prodb" width={80} height={25} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/birthday-hat.svg"
+                alt=""
+                aria-hidden="true"
+                className="absolute pointer-events-none select-none"
+                style={{ width: 16, height: 21, top: -15, left: -1, transform: "rotate(-14deg)" }}
+              />
+            </div>
             {links.flatMap((l) =>
               l.children
                 ? l.children.map((c) => (

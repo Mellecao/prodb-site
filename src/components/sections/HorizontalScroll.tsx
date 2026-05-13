@@ -25,7 +25,7 @@ const CARD_OVERLAYS = [
 
 export function HorizontalScroll({ cards, title, id }: HorizontalScrollProps) {
   return (
-    <section id={id} className="bg-[#040810] py-24 px-8">
+    <section id={id} className="bg-[#040810] py-24 px-8" style={{ contain: "paint layout" }}>
       <div className="max-w-7xl mx-auto">
         {title && (
           <div className="text-center mb-16">
@@ -58,16 +58,6 @@ export function HorizontalScroll({ cards, title, id }: HorizontalScrollProps) {
                 <div
                   className="absolute inset-0"
                   style={{ background: CARD_OVERLAYS[i % CARD_OVERLAYS.length], opacity: 0.7 }}
-                />
-
-                {/* Texture */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/assets/fundo.png"
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
-                  style={{ opacity: 0.05, mixBlendMode: "overlay" }}
                 />
 
                 <div

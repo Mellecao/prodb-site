@@ -7,6 +7,7 @@ import { ScrollTrail } from "@/components/ui/ScrollTrail";
 import { NavIsland } from "@/components/layout/NavIsland";
 import { Footer } from "@/components/layout/Footer";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { AnniversaryIntro } from "@/components/ui/AnniversaryIntro";
 
 export const metadata: Metadata = {
   title: "Prodb - A solução em nuvem que impulsiona o seu sucesso",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <LoadingScreen />
+        <AnniversaryIntro />
         <LiquidGlassProvider>
           <LenisProvider>
             <CustomCursor />

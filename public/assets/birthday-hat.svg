@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 54" fill="none">
+  <!-- Cone body -->
+  <path d="M20 2 L2 50 L38 50 Z" fill="#018DEE"/>
+  <!-- Gold triangle stripe -->
+  <path d="M20 2 L12 26 L28 26 Z" fill="#D4AF37" opacity="0.8"/>
+  <!-- White polka dots -->
+  <circle cx="16" cy="37" r="2.2" fill="white" opacity="0.75"/>
+  <circle cx="26" cy="31" r="1.8" fill="white" opacity="0.65"/>
+  <circle cx="21" cy="44" r="1.8" fill="white" opacity="0.65"/>
+  <circle cx="10" cy="45" r="1.2" fill="white" opacity="0.5"/>
+  <circle cx="31" cy="42" r="1.2" fill="white" opacity="0.5"/>
+  <!-- Brim -->
+  <ellipse cx="20" cy="50" rx="18" ry="4.5" fill="#D4AF37"/>
+  <ellipse cx="20" cy="50" rx="18" ry="4.5" fill="none" stroke="#FFE566" stroke-width="0.8"/>
+  <!-- Pompom outer -->
+  <circle cx="20" cy="5" r="5.5" fill="#D4AF37"/>
+  <!-- Pompom inner -->
+  <circle cx="20" cy="5" r="3.5" fill="#FFE566"/>
+  <!-- Pompom highlight -->
+  <circle cx="18.5" cy="3.5" r="1.5" fill="white" opacity="0.55"/>
+</svg>

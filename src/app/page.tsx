@@ -8,6 +8,7 @@ import { PartnersSection } from "@/components/sections/PartnersSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { NewsSection } from "@/components/sections/NewsSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { AnniversarySection } from "@/components/sections/AnniversarySection";
 const lottieBlocks: [
   { tag: string; title: string; body: string },
   { tag: string; title: string; body: string },
@@ -86,6 +87,8 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      <AnniversarySection />
 
       <WhyProdbSection />
 

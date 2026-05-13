@@ -86,6 +86,101 @@ export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProp
       ref={sectionRef}
       className="relative z-[10] min-h-screen bg-blue-950 flex items-center overflow-hidden pt-24"
     >
+      <style>{`
+        @keyframes hero-mob-orb-a {
+          0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.3; }
+          50% { transform: translateX(-50%) translateY(-24px) scale(1.12); opacity: 0.42; }
+        }
+        @keyframes hero-mob-orb-b {
+          0%, 100% { transform: scale(1); opacity: 0.2; }
+          55% { transform: translateY(18px) scale(1.16); opacity: 0.3; }
+        }
+        @keyframes hero-mob-orb-c {
+          0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.14; }
+          45% { transform: translateX(-50%) translateY(-12px) scale(1.06); opacity: 0.22; }
+        }
+        @keyframes hero-mob-scanline {
+          0% { transform: translateY(-100%); opacity: 0; }
+          8% { opacity: 1; }
+          92% { opacity: 0.6; }
+          100% { transform: translateY(200vh); opacity: 0; }
+        }
+      `}</style>
+
+      {/* Mobile atmospheric background — replaces the flat bg-blue-950 */}
+      <div aria-hidden="true" className="md:hidden absolute inset-0 z-[0] overflow-hidden pointer-events-none">
+        {/* Richer dark gradient base */}
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(168deg, #071330 0%, #040d1f 30%, #020a18 58%, #010508 100%)" }}
+        />
+        {/* Primary blue core orb */}
+        <div
+          className="absolute"
+          style={{
+            top: "14%", left: "50%",
+            width: 460, height: 460,
+            borderRadius: "50%",
+            background: "radial-gradient(ellipse at center, rgba(1,141,238,0.38) 0%, rgba(1,85,185,0.14) 42%, transparent 68%)",
+            filter: "blur(56px)",
+            animation: "hero-mob-orb-a 7s ease-in-out infinite",
+          }}
+        />
+        {/* Teal accent — upper right */}
+        <div
+          className="absolute"
+          style={{
+            top: "-8%", right: "-14%",
+            width: 320, height: 320,
+            borderRadius: "50%",
+            background: "radial-gradient(ellipse at center, rgba(1,175,226,0.26) 0%, transparent 62%)",
+            filter: "blur(46px)",
+            animation: "hero-mob-orb-b 9s 2.4s ease-in-out infinite",
+          }}
+        />
+        {/* Deep indigo bottom anchor */}
+        <div
+          className="absolute"
+          style={{
+            bottom: "-2%", left: "50%",
+            width: 540, height: 280,
+            borderRadius: "50%",
+            background: "radial-gradient(ellipse at center, rgba(2,14,52,0.75) 0%, transparent 70%)",
+            filter: "blur(42px)",
+            animation: "hero-mob-orb-c 6.5s 1.1s ease-in-out infinite",
+          }}
+        />
+        {/* Subtle left bloom */}
+        <div
+          className="absolute"
+          style={{
+            top: "40%", left: "-8%",
+            width: 220, height: 220,
+            borderRadius: "50%",
+            background: "radial-gradient(ellipse at center, rgba(0,100,200,0.2) 0%, transparent 65%)",
+            filter: "blur(36px)",
+          }}
+        />
+        {/* Dot grid */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "radial-gradient(circle, rgba(1,141,238,0.16) 1px, transparent 1px)",
+            backgroundSize: "36px 36px",
+            opacity: 0.45,
+          }}
+        />
+        {/* Slow scanning light line */}
+        <div
+          className="absolute left-0 right-0 h-px pointer-events-none"
+          style={{
+            background: "linear-gradient(90deg, transparent 0%, rgba(1,175,226,0.45) 30%, rgba(1,210,255,0.65) 50%, rgba(1,175,226,0.45) 70%, transparent 100%)",
+            filter: "blur(1px)",
+            animation: "hero-mob-scanline 12s 2s ease-in-out infinite",
+          }}
+        />
+      </div>
+
       {/* Video background — desktop only */}
       <video
         autoPlay
@@ -121,13 +216,23 @@ export function HeroSection({ tag, title, subtitle, ctas = [] }: HeroSectionProp
       {/* Centered text */}
       <div className="relative z-[10] w-full flex flex-col items-center text-center px-8" style={{ transform: "translateY(-150px)" }}>
         {/* Logo — mobile only, sits above the title */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo/prodb-logo-branco.svg"
-          alt="Prodb"
-          className="md:hidden h-10 mb-7 select-none"
-          style={{ filter: "drop-shadow(0 0 16px rgba(1,141,238,0.5))" }}
-        />
+        <div className="md:hidden relative inline-block mb-7">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo/prodb-logo-branco.svg"
+            alt="Prodb"
+            className="h-10 select-none"
+            style={{ filter: "drop-shadow(0 0 16px rgba(1,141,238,0.5))" }}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/birthday-hat.svg"
+            alt=""
+            aria-hidden="true"
+            className="absolute pointer-events-none select-none"
+            style={{ width: 22, height: 29, top: -22, left: -2, transform: "rotate(-14deg)" }}
+          />
+        </div>
         <h1
           className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.06] tracking-[-2px] text-white mb-6 max-w-3xl"
           style={{

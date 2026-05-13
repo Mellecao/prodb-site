@@ -18,6 +18,14 @@ export function GridBackground({ opacity = 1, className = "" }: GridBackgroundPr
     if (!container) return;
 
     let rafId = 0;
+    let visible = true;
+
+    // Pause rendering when section is scrolled out of view
+    const io = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; },
+      { rootMargin: "80px" }
+    );
+    io.observe(container);
 
     const init = async () => {
       const THREE = await import("three");
@@ -27,8 +35,9 @@ export function GridBackground({ opacity = 1, className = "" }: GridBackgroundPr
       camera.position.set(0, 8, 14);
       camera.lookAt(0, 0, 0);
 
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8));
+      // antialias: false — grid lines don't need MSAA, this halves GPU cost
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;";
       container.appendChild(renderer.domElement);
@@ -99,6 +108,9 @@ export function GridBackground({ opacity = 1, className = "" }: GridBackgroundPr
       let t = 0;
       const animate = () => {
         rafId = requestAnimationFrame(animate);
+        // Skip GPU work entirely when off-screen
+        if (!visible) return;
+
         t += 0.005;
 
         // Target camera position: scroll drives Y, mouse drives X and fine-tunes Y
@@ -125,6 +137,7 @@ export function GridBackground({ opacity = 1, className = "" }: GridBackgroundPr
 
       return () => {
         cancelAnimationFrame(rafId);
+        io.disconnect();
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("scroll",    onScroll);
         window.removeEventListener("resize",    onResize);
@@ -142,7 +155,7 @@ export function GridBackground({ opacity = 1, className = "" }: GridBackgroundPr
     let cleanup: (() => void) | undefined;
     init().then((fn) => { cleanup = fn; });
 
-    return () => { cleanup?.(); cancelAnimationFrame(rafId); };
+    return () => { cleanup?.(); cancelAnimationFrame(rafId); io.disconnect(); };
   }, [isMobile]);
 
   if (isMobile) {

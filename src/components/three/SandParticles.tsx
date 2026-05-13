@@ -14,6 +14,14 @@ export function SandParticles() {
     if (!container) return;
 
     let rafId = 0;
+    let visible = true;
+
+    // Pause rendering when hero scrolls out of view
+    const io = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting; },
+      { rootMargin: "0px" }
+    );
+    io.observe(container);
 
     const init = async () => {
       const THREE = await import("three");
@@ -28,7 +36,7 @@ export function SandParticles() {
       camera.position.z = 5;
 
       const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
       renderer.setSize(container.clientWidth, container.clientHeight);
       renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;";
       container.appendChild(renderer.domElement);
@@ -114,6 +122,9 @@ export function SandParticles() {
 
       const animate = () => {
         rafId = requestAnimationFrame(animate);
+        // Skip GPU work entirely when off-screen
+        if (!visible) return;
+
         t += 0.008;
 
         for (let i = 0; i < count; i++) {
@@ -136,6 +147,7 @@ export function SandParticles() {
 
       return () => {
         cancelAnimationFrame(rafId);
+        io.disconnect();
         window.removeEventListener("resize", onResize);
         renderer.dispose();
         geo.dispose();
@@ -148,7 +160,7 @@ export function SandParticles() {
     let cleanup: (() => void) | undefined;
     init().then((fn) => { cleanup = fn; });
 
-    return () => { cleanup?.(); cancelAnimationFrame(rafId); };
+    return () => { cleanup?.(); cancelAnimationFrame(rafId); io.disconnect(); };
   }, [isMobile]);
 
   return (

@@ -155,6 +155,7 @@ export function LoadingScreen() {
         } else {
           setTimeout(() => {
             setPhase("fade");
+            window.dispatchEvent(new CustomEvent("prodb:loading-done"));
             setTimeout(() => setPhase("gone"), 700);
           }, 320);
         }
@@ -190,6 +191,7 @@ export function LoadingScreen() {
         clearInterval(id);
         setTimeout(() => {
           setPhase("fade");
+          window.dispatchEvent(new CustomEvent("prodb:loading-done"));
           setTimeout(() => setPhase("gone"), 700);
         }, 220);
       }
@@ -216,13 +218,23 @@ export function LoadingScreen() {
           }}
         />
         <div className="relative z-10 flex flex-col items-center gap-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo/prodb-logo-branco.svg"
-            alt=""
-            className="h-10 object-contain select-none"
-            style={{ filter: "drop-shadow(0 0 18px rgba(1,141,238,0.7)) drop-shadow(0 0 6px rgba(1,175,226,0.4))" }}
-          />
+          <div className="relative inline-block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo/prodb-logo-branco.svg"
+              alt=""
+              className="h-10 object-contain select-none"
+              style={{ filter: "drop-shadow(0 0 18px rgba(1,141,238,0.7)) drop-shadow(0 0 6px rgba(1,175,226,0.4))" }}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/birthday-hat.svg"
+              alt=""
+              aria-hidden="true"
+              className="absolute pointer-events-none select-none"
+              style={{ width: 22, height: 29, top: -22, left: -2, transform: "rotate(-14deg)" }}
+            />
+          </div>
           <div className="overflow-hidden rounded-full" style={{ width: 120, height: 2, background: "rgba(255,255,255,0.07)" }}>
             <div
               ref={barRef}
